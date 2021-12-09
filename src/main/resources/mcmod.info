@@ -1,16 +1,15 @@
 [
 {
-  "modid": "neiintegration",
-  "name": "NEI Integration",
+  "modid": "${modId}",
+  "name": "${modName}",
   "description": "NEI handlers for all of the mods, one at a time.",
   "version": "${modVersion}",
   "mcversion": "${minecraftVersion}",
-  "logoFile": "",
   "url": "",
   "updateUrl": "",
   "authorList": ["tonius11"],
   "credits": "ChickenBones, mistaqur, iTitus, and anyone else who helped making the mod, directly or indirectly",
-  "parent": "",
+  "logoFile": "",
   "screenshots": [],
   "dependencies": []
 }
