@@ -1,0 +1,9 @@
+repositories{
+    maven {
+        url "https://cursemaven.com"
+    }
+    maven {
+        name = "jitpack.io"
+        url = "https://jitpack.io"
+    }
+}

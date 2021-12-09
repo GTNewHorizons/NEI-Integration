@@ -1,7 +1,11 @@
+Forked and maintained by the GTNH Modpack
+
+
 NEI-Integration
 ===============
 
-NEI Integration is two things-- a playground to try out new types of NEI handlers, and a place to put NEI handlers if I somehow can't get them into the mods they were made for. The mod aims to stimulate other mod developers to add NEI handlers to their own mods.  
+NEI Integration is two things-- a playground to try out new types of NEI handlers, and a place to put NEI handlers if I 
+somehow can't get them into the mods they were made for. The mod aims to stimulate other mod developers to add NEI handlers to their own mods.  
   
 ### Requests
 Requests for additional NEI handlers will gladly be accepted. Just create an issue, and I'll see what I can do.  
