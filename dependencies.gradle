@@ -11,5 +11,5 @@ dependencies {
     compileOnly("com.mod-buildcraft:buildcraft:7.1.23:dev") {
         transitive = false
     }
+    compileOnly files("dependencies/Pam's HarvestCraft 1.7.10La.jar")
 }
-
