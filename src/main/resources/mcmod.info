@@ -1,16 +1,20 @@
-[
 {
-  "modid": "${modId}",
-  "name": "${modName}",
-  "description": "NEI handlers for all of the mods, one at a time.",
-  "version": "${modVersion}",
-  "mcversion": "${minecraftVersion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["tonius11"],
-  "credits": "ChickenBones, mistaqur, iTitus, and anyone else who helped making the mod, directly or indirectly",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "NEI handlers for all of the mods, one at a time.",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "",
+		"updateUrl": "",
+		"authorList": ["tonius11"],
+		"credits": "ChickenBones, mistaqur, iTitus, and anyone else who helped making the mod, directly or indirectly",
+		"logoFile": "",
+		"screenshots": [],
+		"requiredMods": ["Forge", "NotEnoughItems"],
+		"dependencies": ["NotEnoughItems"],
+		"dependants": [],
+		"useDependencyInformation": true
+	}]
 }
-]
