@@ -115,10 +115,10 @@ public class Utils {
         return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
     }
 
-    public static Class getClass(String name) {
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> getClass(String name) {
         try {
-            Class clazz = Class.forName(name);
-            return clazz;
+            return (Class<T>) Class.forName(name);
         } catch (Exception e) {
             NEIIntegration.log.error("Failed to find class " + name);
         }

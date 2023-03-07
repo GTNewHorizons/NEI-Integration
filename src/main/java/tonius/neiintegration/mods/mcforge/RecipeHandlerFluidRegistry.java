@@ -128,7 +128,7 @@ public class RecipeHandlerFluidRegistry extends RecipeHandlerBase {
     }
 
     @Override
-    public List<String> provideTooltip(GuiRecipe guiRecipe, List<String> currenttip, CachedBaseRecipe crecipe,
+    public List<String> provideTooltip(GuiRecipe<?> guiRecipe, List<String> currenttip, CachedBaseRecipe crecipe,
             Point relMouse) {
         super.provideTooltip(guiRecipe, currenttip, crecipe, relMouse);
         Rectangle tank = ((CachedFluidRegistryRecipe) crecipe).fluid.position;

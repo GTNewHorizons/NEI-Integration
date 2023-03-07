@@ -27,22 +27,21 @@ public class TileEntityDumper extends DataDumper {
     public Iterable<String[]> dump(int mode) {
         List<String[]> list = new LinkedList<String[]>();
 
-        Map<Class, String> classToNameMap = ReflectionHelper
+        Map<Class<?>, String> classToNameMap = ReflectionHelper
                 .getPrivateValue(TileEntity.class, null, "field_145853_j", "classToNameMap");
-        List<Class> classes = new ArrayList<Class>();
+        List<Class<?>> classes = new ArrayList<>();
         classes.addAll(classToNameMap.keySet());
-        Collections.sort(classes, new Comparator<Class>() {
+        Collections.sort(classes, new Comparator<Class<?>>() {
 
             @Override
-            public int compare(Class o1, Class o2) {
+            public int compare(Class<?> o1, Class<?> o2) {
                 if (o1 == null || o2 == null) {
                     return 0;
                 }
                 return o1.getName().compareTo(o2.getName());
-            }
-        });
+            }});
 
-        for (Class clazz : classes) {
+        for (Class<?> clazz : classes) {
             if (clazz != null) {
                 list.add(new String[] { clazz.getName(), classToNameMap.get(clazz) });
             }

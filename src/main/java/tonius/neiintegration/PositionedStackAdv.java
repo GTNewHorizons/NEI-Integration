@@ -27,7 +27,7 @@ public class PositionedStackAdv extends PositionedStack {
         return new Rectangle(this.relx - 1, this.rely - 1, 18, 18);
     }
 
-    public List<String> handleTooltip(GuiRecipe guiRecipe, List<String> currenttip) {
+    public List<String> handleTooltip(GuiRecipe<?> guiRecipe, List<String> currenttip) {
         if (!this.tooltip.isEmpty()) {
             for (String tip : this.tooltip) {
                 currenttip.add(tip);

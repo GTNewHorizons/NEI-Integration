@@ -76,7 +76,7 @@ public class RecipeHandlerOreDictionary extends RecipeHandlerBase {
     }
 
     @Override
-    public List<String> provideTooltip(GuiRecipe guiRecipe, List<String> currenttip, CachedBaseRecipe crecipe,
+    public List<String> provideTooltip(GuiRecipe<?> guiRecipe, List<String> currenttip, CachedBaseRecipe crecipe,
             Point relMouse) {
         if (new Rectangle(68, 21, 24, 17).contains(relMouse)) {
             currenttip.add(EnumChatFormatting.GRAY + Utils.translate("handler.oreDictionary.warning"));

@@ -50,6 +50,7 @@ public class RecipeHandlerPresserOld extends RecipeHandlerHCBase {
         return GuiPamPresser.class;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<ItemStack, ItemStack> getRecipes() {
         if (getSmeltingList == null) {

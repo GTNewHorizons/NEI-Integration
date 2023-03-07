@@ -24,8 +24,9 @@ public class ConfigGui extends GuiConfig {
                 Utils.translate("config.title"));
     }
 
+    @SuppressWarnings("rawtypes")
     private static List<IConfigElement> getConfigElements(GuiScreen parent) {
-        List<IConfigElement> list = new ArrayList<IConfigElement>();
+        List<IConfigElement> list = new ArrayList<>();
         String prefix = "neiintegration.config.";
 
         for (Section configSection : Config.configSections) {

@@ -33,8 +33,8 @@ public class DimensionDumper extends DataDumper {
 
         for (int id : ids) {
             int providerId = DimensionManager.getProviderType(id);
-            Map<Integer, Class> providers = ReflectionHelper.getPrivateValue(DimensionManager.class, null, "providers");
-            Class providerClass = providers.get(providerId);
+            Map<Integer, Class<?>> providers = ReflectionHelper.getPrivateValue(DimensionManager.class, null, "providers");
+            Class<?> providerClass = providers.get(providerId);
             list.add(new String[] { String.valueOf(id), String.valueOf(providerId), providerClass.getName() });
         }
 

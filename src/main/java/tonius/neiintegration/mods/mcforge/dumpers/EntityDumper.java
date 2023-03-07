@@ -31,6 +31,7 @@ public class EntityDumper extends DataDumper {
         return new String[] { "Mod", "ID", "Name", "Class Name" };
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Iterable<String[]> dump(int mode) {
         List<String[]> list = new LinkedList<String[]>();
