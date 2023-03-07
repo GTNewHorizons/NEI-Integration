@@ -4,17 +4,17 @@ import tonius.neiintegration.IntegrationBase;
 import tonius.neiintegration.Utils;
 
 public class MFRIntegration extends IntegrationBase {
-    
+
     @Override
     public String getName() {
         return "MineFactory Reloaded";
     }
-    
+
     @Override
     public boolean isValid() {
         return Utils.isModLoaded("MineFactoryReloaded");
     }
-    
+
     @Override
     public void loadConfig() {
         this.registerHandler(new RecipeHandlerBioReactor());
@@ -28,5 +28,5 @@ public class MFRIntegration extends IntegrationBase {
         this.registerHandler(new RecipeHandlerSlaughterhouse());
         this.registerHandler(new RecipeHandlerSludgeBoiler());
     }
-    
+
 }

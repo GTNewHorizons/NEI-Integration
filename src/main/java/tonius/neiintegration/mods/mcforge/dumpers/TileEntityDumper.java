@@ -39,7 +39,8 @@ public class TileEntityDumper extends DataDumper {
                     return 0;
                 }
                 return o1.getName().compareTo(o2.getName());
-            }});
+            }
+        });
 
         for (Class<?> clazz : classes) {
             if (clazz != null) {
