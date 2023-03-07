@@ -19,5 +19,8 @@ public class RailcraftIntegration extends IntegrationBase {
     public void loadConfig() {
         this.registerHandler(new RecipeHandlerBlastFurnace());
         this.registerHandler(new RecipeHandlerCokeOven());
+        this.registerHandler(new RecipeHandlerRockCrusher());
+        this.registerHandler(new RecipeHandlerRollingMachineShaped());
+        this.registerHandler(new RecipeHandlerRollingMachineShapeless());
     }
 }
