@@ -11,4 +11,5 @@ dependencies {
     compileOnly('curse.maven:cofh-core-69162:2388751')
     compileOnly('curse.maven:minefactory-reloaded-66672:2277486')
     compileOnly(deobfCurse('electrical-age-253045:2937618'))
+    compileOnly(deobf('http://big-reactors.com/download/alpha/BigReactors-0.4.3A.jar'))
 }
