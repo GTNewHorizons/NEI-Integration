@@ -13,6 +13,11 @@ public class HarvestCraftIntegration extends IntegrationBase {
     }
 
     @Override
+    public boolean isEnabledByDefault() {
+        return false;
+    }
+
+    @Override
     public boolean isValid() {
         return Utils.isModLoaded("harvestcraft");
     }
