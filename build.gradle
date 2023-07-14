@@ -1,4 +1,4 @@
-//version: 1682280358
+//version: 1689101527
 /*
  DO NOT CHANGE THIS FILE!
  Also, you may replace this file at any time if there is an update available.
@@ -69,8 +69,11 @@ plugins {
     id 'com.diffplug.spotless' version '6.13.0' apply false // 6.13.0 is the last jvm8 supporting version
     id 'com.modrinth.minotaur' version '2.+' apply false
     id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.2'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.19'
 }
+
+print("You might want to check out './gradlew :faq' if your build fails.\n")
+
 boolean settingsupdated = verifySettingsGradle()
 settingsupdated = verifyGitAttributes() || settingsupdated
 if (settingsupdated)
@@ -112,6 +115,8 @@ propertyDefaultIfUnset("usesMixinDebug", project.usesMixins)
 propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnset("channel", "stable")
 propertyDefaultIfUnset("mappingsVersion", "12")
+propertyDefaultIfUnset("usesMavenPublishing", true)
+propertyDefaultIfUnset("mavenPublishUrl", "http://jenkins.usrv.eu:8081/nexus/content/repositories/releases")
 propertyDefaultIfUnset("modrinthProjectId", "")
 propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnset("curseForgeProjectId", "")
@@ -219,6 +224,8 @@ if (enableModernJavaSyntax.toBoolean()) {
 
     dependencies {
         annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:1.0.0'
+        // workaround for https://github.com/bsideup/jabel/issues/174
+        annotationProcessor 'net.java.dev.jna:jna-platform:5.13.0'
         compileOnly('com.github.bsideup.jabel:jabel-javac-plugin:1.0.0') {
             transitive = false // We only care about the 1 annotation class
         }
@@ -352,7 +359,24 @@ catch (Exception ignored) {
 String identifiedVersion
 String versionOverride = System.getenv("VERSION") ?: null
 try {
-    identifiedVersion = versionOverride == null ? gitVersion() : versionOverride
+    // Produce a version based on the tag, or for branches something like 0.2.2-configurable-maven-and-extras.38+43090270b6-dirty
+    if (versionOverride == null) {
+        def gitDetails = versionDetails()
+        def isDirty = gitVersion().endsWith(".dirty") // No public API for this, isCleanTag has a different meaning
+        String branchName = gitDetails.branchName
+        branchName = branchName.replaceAll("[^a-zA-Z0-9-]+", "-") // sanitize branch names for semver
+        identifiedVersion = gitDetails.lastTag
+        if (gitDetails.commitDistance > 0) {
+            identifiedVersion += "-${branchName}.${gitDetails.commitDistance}+${gitDetails.gitHash}"
+            if (isDirty) {
+                identifiedVersion += "-dirty"
+            }
+        } else if (isDirty) {
+            identifiedVersion += "-${branchName}+${gitDetails.gitHash}-dirty"
+        }
+    } else {
+        identifiedVersion = versionOverride
+    }
 }
 catch (Exception ignored) {
     out.style(Style.Failure).text(
@@ -460,8 +484,17 @@ sourceSets {
     }
 }
 
-if (file('addon.gradle').exists()) {
+if (file('addon.gradle.kts').exists()) {
+    apply from: 'addon.gradle.kts'
+} else if (file('addon.gradle').exists()) {
     apply from: 'addon.gradle'
+}
+
+// File for local tweaks not commited to Git
+if (file('addon.local.gradle.kts').exists()) {
+    apply from: 'addon.local.gradle.kts'
+} else if (file('addon.local.gradle').exists()) {
+    apply from: 'addon.local.gradle'
 }
 
 // Allow unsafe repos but warn
@@ -474,7 +507,14 @@ repositories.configureEach { repo ->
     }
 }
 
-apply from: 'repositories.gradle'
+if (file('repositories.gradle.kts').exists()) {
+    apply from: 'repositories.gradle.kts'
+} else if (file('repositories.gradle').exists()) {
+    apply from: 'repositories.gradle'
+} else {
+    logger.error("Neither repositories.gradle.kts nor repositories.gradle was found, make sure you extracted the full ExampleMod template.")
+    throw new RuntimeException("Missing repositories.gradle[.kts]")
+}
 
 configurations {
     runtimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
@@ -564,9 +604,10 @@ repositories {
 
 def mixinProviderGroup = "io.github.legacymoddingmc"
 def mixinProviderModule = "unimixins"
-def mixinProviderVersion = "0.1.6"
+def mixinProviderVersion = "0.1.7.1"
 def mixinProviderSpecNoClassifer = "${mixinProviderGroup}:${mixinProviderModule}:${mixinProviderVersion}"
 def mixinProviderSpec = "${mixinProviderSpecNoClassifer}:dev"
+ext.mixinProviderSpec = mixinProviderSpec
 
 dependencies {
     if (usesMixins.toBoolean()) {
@@ -605,7 +646,32 @@ configurations.all {
     }
 }
 
-apply from: 'dependencies.gradle'
+dependencies {
+    constraints {
+        def minGtnhLibVersion = "0.0.13"
+        implementation("com.github.GTNewHorizons:GTNHLib:${minGtnhLibVersion}") {
+            because("fixes duplicate mod errors in java 17 configurations using old gtnhlib")
+        }
+        runtimeOnly("com.github.GTNewHorizons:GTNHLib:${minGtnhLibVersion}") {
+            because("fixes duplicate mod errors in java 17 configurations using old gtnhlib")
+        }
+        devOnlyNonPublishable("com.github.GTNewHorizons:GTNHLib:${minGtnhLibVersion}") {
+            because("fixes duplicate mod errors in java 17 configurations using old gtnhlib")
+        }
+        runtimeOnlyNonPublishable("com.github.GTNewHorizons:GTNHLib:${minGtnhLibVersion}") {
+            because("fixes duplicate mod errors in java 17 configurations using old gtnhlib")
+        }
+    }
+}
+
+if (file('dependencies.gradle.kts').exists()) {
+    apply from: 'dependencies.gradle.kts'
+} else if (file('dependencies.gradle').exists()) {
+    apply from: 'dependencies.gradle'
+} else {
+    logger.error("Neither dependencies.gradle.kts nor dependencies.gradle was found, make sure you extracted the full ExampleMod template.")
+    throw new RuntimeException("Missing dependencies.gradle[.kts]")
+}
 
 def mixingConfigRefMap = 'mixins.' + modId + '.refmap.json'
 def mixinTmpDir = buildDir.path + File.separator + 'tmp' + File.separator + 'mixins'
@@ -718,13 +784,13 @@ ext.java17PatchDependenciesCfg = configurations.create("java17PatchDependencies"
 }
 
 dependencies {
-    def lwjgl3ifyVersion = '1.3.5'
+    def lwjgl3ifyVersion = '1.4.0'
     def asmVersion = '9.4'
     if (modId != 'lwjgl3ify') {
         java17Dependencies("com.github.GTNewHorizons:lwjgl3ify:${lwjgl3ifyVersion}")
     }
     if (modId != 'hodgepodge') {
-        java17Dependencies('com.github.GTNewHorizons:Hodgepodge:2.2.8')
+        java17Dependencies('com.github.GTNewHorizons:Hodgepodge:2.2.19')
     }
 
     java17PatchDependencies('net.minecraft:launchwrapper:1.15') {transitive = false}
@@ -816,6 +882,18 @@ public abstract class RunHotswappableMinecraftTask extends RunMinecraftTask {
             !file.path.contains("2.9.4-nightly-20150209") // Remove lwjgl2
         }
         this.classpath(project.java17DependenciesCfg)
+    }
+
+    public void setup(Project project) {
+        super.setup(project)
+        if (project.usesMixins.toBoolean()) {
+            this.extraJvmArgs.addAll(project.provider(() -> {
+                def mixinCfg = project.configurations.detachedConfiguration(project.dependencies.create(project.mixinProviderSpec))
+                mixinCfg.canBeConsumed = false
+                mixinCfg.transitive = false
+                enableHotswap ? ["-javaagent:" + mixinCfg.singleFile.absolutePath] : []
+            }))
+        }
     }
 }
 
@@ -961,6 +1039,9 @@ idea {
                 }
             }
             runConfigurations {
+                "0. Build and Test"(Gradle) {
+                    taskNames = ["build"]
+                }
                 "1. Run Client"(Gradle) {
                     taskNames = ["runClient"]
                 }
@@ -1080,6 +1161,11 @@ tasks.named("processIdeaSettings").configure {
     dependsOn("injectTags")
 }
 
+tasks.named("ideVirtualMainClasses").configure {
+    // Make IntelliJ "Build project" build the mod jars
+    dependsOn("jar", "reobfJar", "spotlessCheck")
+}
+
 // workaround variable hiding in pom processing
 def projectConfigs = project.configurations
 
@@ -1100,12 +1186,14 @@ publishing {
     }
 
     repositories {
-        maven {
-            url = "http://jenkins.usrv.eu:8081/nexus/content/repositories/releases"
-            allowInsecureProtocol = true
-            credentials {
-                username = System.getenv("MAVEN_USER") ?: "NONE"
-                password = System.getenv("MAVEN_PASSWORD") ?: "NONE"
+        if (usesMavenPublishing.toBoolean()) {
+            maven {
+                url = mavenPublishUrl
+                allowInsecureProtocol = mavenPublishUrl.startsWith("http://") // Mostly for the GTNH maven
+                credentials {
+                    username = System.getenv("MAVEN_USER") ?: "NONE"
+                    password = System.getenv("MAVEN_PASSWORD") ?: "NONE"
+                }
             }
         }
     }
@@ -1252,6 +1340,23 @@ if (!project.getGradle().startParameter.isOffline() && !Boolean.getBoolean('DISA
     }
 }
 
+// If you want to add more cases to this task, implement them as arguments if total amount to print gets too large
+tasks.register('faq') {
+    group = 'GTNH Buildscript'
+    description = 'Prints frequently asked questions about building a project'
+
+    doLast {
+        print("If your build fails to fetch dependencies, run './gradlew updateDependencies'. " +
+            "Or you can manually check if the versions are still on the distributing sites - " +
+            "the links can be found in repositories.gradle and build.gradle:repositories, " +
+            "but not build.gradle:buildscript.repositories - those ones are for gradle plugin metadata.\n\n" +
+            "If your build fails to recognize the syntax of new Java versions, enable Jabel in your " +
+            "gradle.properties. See how it's done in GTNH ExampleMod/gradle.properties. " +
+            "However, keep in mind that Jabel enables only syntax features, but not APIs that were introduced in " +
+            "Java 9 or later.")
+    }
+}
+
 static URL availableBuildScriptUrl() {
     new URL("https://raw.githubusercontent.com/GTNewHorizons/ExampleMod1.7.10/master/build.gradle")
 }
@@ -1309,8 +1414,14 @@ boolean isNewBuildScriptVersionAvailable() {
 
     String currentBuildScript = getFile("build.gradle").getText()
     String currentBuildScriptHash = getVersionHash(currentBuildScript)
-    String availableBuildScript = availableBuildScriptUrl().newInputStream(parameters).getText()
-    String availableBuildScriptHash = getVersionHash(availableBuildScript)
+    String availableBuildScriptHash
+    try {
+        String availableBuildScript = availableBuildScriptUrl().newInputStream(parameters).getText()
+        availableBuildScriptHash = getVersionHash(availableBuildScript)
+    } catch (IOException e) {
+        logger.warn("Could not check for buildscript update availability: {}", e.message)
+        return false
+    }
 
     boolean isUpToDate = currentBuildScriptHash.empty || availableBuildScriptHash.empty || currentBuildScriptHash == availableBuildScriptHash
     return !isUpToDate
@@ -1474,4 +1585,18 @@ def getSecondaryArtifacts() {
     if (!noPublishedSources) secondaryArtifacts += [sourcesJar]
     if (apiPackage) secondaryArtifacts += [apiJar]
     return secondaryArtifacts
+}
+
+// For easier scripting of things that require variables defined earlier in the buildscript
+if (file('addon.late.gradle.kts').exists()) {
+    apply from: 'addon.late.gradle.kts'
+} else if (file('addon.late.gradle').exists()) {
+    apply from: 'addon.late.gradle'
+}
+
+// File for local tweaks not commited to Git
+if (file('addon.late.local.gradle.kts').exists()) {
+    apply from: 'addon.late.local.gradle.kts'
+} else if (file('addon.late.local.gradle').exists()) {
+    apply from: 'addon.late.local.gradle'
 }
