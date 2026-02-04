@@ -142,6 +142,7 @@ public class RecipeHandlerLaserDrill extends RecipeHandlerBase {
     public void loadAllRecipes() {
         for (WeightedRandom.Item drop : laserOres) {
             if (drop instanceof WeightedRandomItemStack) {
+                boolean hasFocus = false;
                 ItemStack dropStack = ((WeightedRandomItemStack) drop).getStack();
                 for (int i : laserPreferredOres.keySet()) {
                     List<ItemStack> preferredStacks = laserPreferredOres.get(i);
@@ -149,9 +150,13 @@ public class RecipeHandlerLaserDrill extends RecipeHandlerBase {
                         for (ItemStack preferredStack : preferredStacks) {
                             if (Utils.areStacksSameTypeCraftingSafe(preferredStack, dropStack)) {
                                 this.arecipes.add(new CachedLaserDrillRecipe(dropStack, drop.itemWeight, i));
+                                hasFocus = true;
                             }
                         }
                     }
+                }
+                if (!hasFocus) {
+                    this.arecipes.add(new CachedLaserDrillRecipe(dropStack, drop.itemWeight, null));
                 }
             }
         }
@@ -163,15 +168,20 @@ public class RecipeHandlerLaserDrill extends RecipeHandlerBase {
             if (drop instanceof WeightedRandomItemStack) {
                 if (Utils.areStacksSameTypeCraftingSafe(((WeightedRandomItemStack) drop).getStack(), result)) {
                     ItemStack dropStack = ((WeightedRandomItemStack) drop).getStack();
+                    boolean hasFocus = false;
                     for (int i : laserPreferredOres.keySet()) {
                         List<ItemStack> preferredStacks = laserPreferredOres.get(i);
                         if (preferredStacks != null) {
                             for (ItemStack preferredStack : preferredStacks) {
                                 if (Utils.areStacksSameTypeCraftingSafe(preferredStack, dropStack)) {
                                     this.arecipes.add(new CachedLaserDrillRecipe(dropStack, drop.itemWeight, i));
+                                    hasFocus = true;
                                 }
                             }
                         }
+                    }
+                    if (!hasFocus) {
+                        this.arecipes.add(new CachedLaserDrillRecipe(dropStack, drop.itemWeight, null));
                     }
                 }
             }
