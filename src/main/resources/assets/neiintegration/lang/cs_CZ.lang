@@ -8,7 +8,7 @@ neiintegration.chance=Šance: %s
 neiintegration.chance.never=Nikdy
 neiintegration.chance.lessThan1=<1%
 
-neiintegration.ticks=%s ticks
+neiintegration.ticks=%s tiků
 
 neiintegration.tooltip.internalName=ID:
 neiintegration.tooltip.unlocalizedName=Nepřeložené jméno:
