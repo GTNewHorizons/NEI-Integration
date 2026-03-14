@@ -48,7 +48,8 @@ public class MCForgeTooltipHandler {
                 && (!Config.tooltipBurnTimeAdvanced || evt.showAdvancedItemTooltips)) {
             int burnTime = TileEntityFurnace.getItemBurnTime(evt.itemStack);
             if (burnTime > 0) {
-                evt.toolTip.add(Utils.translate("tooltip.burntime") + " " + burnTime + " " + Utils.translate("ticks"));
+                evt.toolTip.add(
+                        Utils.translate("tooltip.burntime") + " " + String.format(Utils.translate("ticks"), burnTime));
             }
         }
 

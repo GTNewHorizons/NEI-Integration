@@ -8,7 +8,7 @@ neiintegration.chance=几率：%s
 neiintegration.chance.never=无
 neiintegration.chance.lessThan1=<1%
 
-neiintegration.ticks=ticks
+neiintegration.ticks=%s ticks
 
 neiintegration.tooltip.internalName=ID:
 neiintegration.tooltip.unlocalizedName=未本地化名称:

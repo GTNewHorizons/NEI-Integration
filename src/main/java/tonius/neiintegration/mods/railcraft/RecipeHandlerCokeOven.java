@@ -105,12 +105,8 @@ public class RecipeHandlerCokeOven extends RecipeHandlerBase {
     public void drawExtras(int recipe) {
         this.drawProgressBar(40, 32, 177, 61, 21, 16, 100, 0);
         this.drawProgressBar(21, 15, 176, 47, 14, 14, 100, 11);
-        GuiDraw.drawStringC(
-                ((CachedCokeOvenRecipe) this.arecipes.get(recipe)).cookTime + " " + Utils.translate("ticks"),
-                64,
-                12,
-                0x372A1D,
-                false);
+        CachedCokeOvenRecipe crecipe = (CachedCokeOvenRecipe) this.arecipes.get(recipe);
+        GuiDraw.drawStringC(String.format(Utils.translate("ticks"), crecipe.cookTime), 64, 12, 0x372A1D, false);
     }
 
     @Override
