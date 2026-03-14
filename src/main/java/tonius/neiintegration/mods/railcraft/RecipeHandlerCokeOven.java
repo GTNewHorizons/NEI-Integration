@@ -109,7 +109,7 @@ public class RecipeHandlerCokeOven extends RecipeHandlerBase {
                 ((CachedCokeOvenRecipe) this.arecipes.get(recipe)).cookTime + " " + Utils.translate("ticks"),
                 64,
                 12,
-                0x808080,
+                0x372A1D,
                 false);
     }
 
