@@ -98,12 +98,8 @@ public class RecipeHandlerBlastFurnace extends RecipeHandlerBase {
 
     @Override
     public void drawExtras(int recipe) {
-        GuiDraw.drawStringC(
-                ((CachedBlastFurnaceRecipe) this.arecipes.get(recipe)).cookTime + " " + Utils.translate("ticks"),
-                120,
-                6,
-                0x808080,
-                false);
+        CachedBlastFurnaceRecipe crecipe = (CachedBlastFurnaceRecipe) this.arecipes.get(recipe);
+        GuiDraw.drawStringC(String.format(Utils.translate("ticks"), crecipe.cookTime), 120, 6, 0x808080, false);
         this.changeToGuiTexture();
         this.drawProgressBar(51, 25, 176, 0, 14, 14, 48, 7);
         this.drawProgressBar(74, 23, 176, 14, 24, 16, 48, 0);
