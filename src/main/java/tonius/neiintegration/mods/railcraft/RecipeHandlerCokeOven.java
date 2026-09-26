@@ -1,7 +1,6 @@
 package tonius.neiintegration.mods.railcraft;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.api.API;
 import mods.railcraft.api.crafting.ICokeOvenRecipe;
 import mods.railcraft.api.crafting.RailcraftCraftingManager;
-import tonius.neiintegration.PositionedFluidTank;
 import tonius.neiintegration.RecipeHandlerBase;
 import tonius.neiintegration.Utils;
 
@@ -32,8 +30,8 @@ public class RecipeHandlerCokeOven extends RecipeHandlerBase {
     public class CachedCokeOvenRecipe extends CachedBaseRecipe {
 
         public List<PositionedStack> input;
-        public PositionedStack output;
-        public PositionedFluidTank fluidOutput;
+        public List<PositionedStack> outputs = new ArrayList<>();
+        public boolean hasFluidOutput;
         public int cookTime;
 
         public CachedCokeOvenRecipe(ICokeOvenRecipe recipe) {
@@ -41,32 +39,28 @@ public class RecipeHandlerCokeOven extends RecipeHandlerBase {
                 this.input = Collections.singletonList(new PositionedStack(recipe.getInput(), 21, 32));
             }
             if (recipe.getOutput() != null) {
-                this.output = new PositionedStack(recipe.getOutput(), 67, 32);
+                this.outputs.add(new PositionedStack(recipe.getOutput(), 67, 32));
             }
             if (recipe.getFluidOutput() != null) {
-                this.fluidOutput = new PositionedFluidTank(
-                        recipe.getFluidOutput(),
-                        64000,
-                        new Rectangle(95, 13, 48, 47),
-                        RecipeHandlerCokeOven.this.getGuiTexture(),
-                        new Point(176, 0));
+                this.hasFluidOutput = true;
+                this.outputs.add(new PositionedStack.Fluid(recipe.getFluidOutput(), 95, 13, 48, 47, 64000));
             }
             this.cookTime = recipe.getCookTime();
         }
 
         @Override
         public List<PositionedStack> getIngredients() {
-            return this.getCycledIngredients(RecipeHandlerCokeOven.this.cycleticks / 20, this.input);
+            return this.input;
         }
 
         @Override
         public PositionedStack getResult() {
-            return this.output;
+            return null;
         }
 
         @Override
-        public PositionedFluidTank getFluidTank() {
-            return this.fluidOutput;
+        public List<PositionedStack> getOtherStacks() {
+            return this.outputs;
         }
     }
 
@@ -106,6 +100,10 @@ public class RecipeHandlerCokeOven extends RecipeHandlerBase {
         this.drawProgressBar(40, 32, 177, 61, 21, 16, 100, 0);
         this.drawProgressBar(21, 15, 176, 47, 14, 14, 100, 11);
         CachedCokeOvenRecipe crecipe = (CachedCokeOvenRecipe) this.arecipes.get(recipe);
+        if (crecipe.hasFluidOutput) {
+            this.changeToGuiTexture();
+            GuiDraw.drawTexturedModalRect(95, 13, 176, 0, 48, 47);
+        }
         GuiDraw.drawStringC(String.format(Utils.translate("ticks"), crecipe.cookTime), 64, 12, 0x372A1D, false);
     }
 
